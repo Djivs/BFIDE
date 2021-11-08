@@ -51,6 +51,8 @@ private:
 
     QHBoxLayout *layout;
 
+    QString compilerPath;
+
 
     void openFile();
     bool openQFile(QFile &file, QIODeviceBase::OpenMode mode);
@@ -58,6 +60,7 @@ private:
     void saveFile();
     int saveCodeToFile(QString fileName);
 
+    void loadComiplerPath();
     void addNewEditor(QFile &file);
 
     void runCode(QString fileName);

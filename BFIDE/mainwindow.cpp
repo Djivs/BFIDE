@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     closeTabShortcut = new QShortcut(QKeySequence(tr("Ctrl+W")), this, \
                                      [this] {editorsTabWidget->removeTab(editorsTabWidget->currentIndex());});
 
+    loadComiplerPath();
+
     QWidget *w = new QWidget();
     w->setLayout(layout); setCentralWidget(w);
 }
@@ -62,6 +64,10 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::runCode(QString fileName) {
+    if (fileName == "") {
+        saveFile();
+        fileName = editors[editorsTabWidget->currentIndex()].fileName;
+    }
     if(saveCodeToFile(fileName))
         return;
 
@@ -71,7 +77,7 @@ void MainWindow::runCode(QString fileName) {
         return;
     }
     if (!pid) {
-        QString command = "brainfuck " + fileName + ";read  -n 1 -p";
+        QString command = compilerPath + ' ' + fileName + ";read  -n 1 -p";
         if(execlp("terminator", "terminator", "-e",  command.toStdString().c_str(), NULL) == -1) {
             error("Can't run code via terminal");
             return;
@@ -131,6 +137,18 @@ void MainWindow::saveFile() {
         file.write(editors[editorsTabWidget->currentIndex()].edit->toPlainText().toStdString().c_str());
     }
 
+}
+void MainWindow::loadComiplerPath() {
+    QFile configFile("../BFIDE/.config");
+    if (openQFile(configFile, QFile::ReadOnly))
+        return;
+    QStringList configLines = QString(configFile.readAll()).split('\n');
+    for (auto &i : configLines) {
+        QStringList params = i.split('=');
+        if (params[0] == "compiler") {
+            compilerPath = params[1];
+        }
+    }
 }
 
 void MainWindow::addNewEditor(QFile &file) {
