@@ -27,3 +27,4 @@ Or, if it didn't helped, you need to check out this [article](https://wiki.qt.io
 But anyway, if you face with some troubles, you can always open a new issue on issues tab.  
 ## Credits:  
 - [CQtDeployer](https://github.com/QuasarApp/CQtDeployer)
+- [Code Editor Class](https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/widgets/codeeditor?h=5.15)

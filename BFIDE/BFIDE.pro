@@ -10,12 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     bfhighlighter.cpp \
+    codeeditor.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     QConsole/qconsole.h \
     bfhighlighter.h \
+    codeeditor.h \
     mainwindow.h
 
 # Default rules for deployment.

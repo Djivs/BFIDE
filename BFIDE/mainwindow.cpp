@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setMenuBar(menuBar);
 
 
-    QPlainTextEdit *textEdit = new QPlainTextEdit();
+    CodeEditor *textEdit = new CodeEditor();
     textEdit->setFont(QFont("Courier", 11));
     textEdit->setStyleSheet("QPlainTextEdit { background-color: white; color: grey;}");
 
@@ -136,7 +136,7 @@ void MainWindow::saveFile() {
 void MainWindow::addNewEditor(QFile &file) {
     QString fileName = file.fileName();
     if (editors[editorsTabWidget->currentIndex()].fileName!= fileName) {
-        QPlainTextEdit *text = new QPlainTextEdit;
+        CodeEditor *text = new CodeEditor;
         text->setPlainText(file.readAll());
         BFHighlighter *highlighter = new BFHighlighter(text->document());
         editors.append({text, highlighter, fileName});

@@ -18,6 +18,7 @@
 #include <QShortcut>
 
 #include "bfhighlighter.h"
+#include "codeeditor.h"
 
 class MainWindow : public QMainWindow
 {
@@ -41,7 +42,7 @@ private:
     QTabWidget *editorsTabWidget;
 
     struct Editor {
-        QPlainTextEdit *edit;
+        CodeEditor *edit;
         BFHighlighter *highlighter;
         QString fileName;
     };
