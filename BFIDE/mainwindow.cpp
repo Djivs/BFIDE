@@ -165,6 +165,11 @@ void MainWindow::processChanges() {
     for (auto &i : changedIndexes) {
         switch (i) {
             case 0:
+                QFile file(changedLineEditsValues[i]);
+                if (!file.open(QFile::ReadOnly) || QFileInfo(file).completeSuffix() != "") {
+                    error("Указанный путь для компилятора не существует\nили указанный файл не является исполняемым");
+                    break;
+                }
                 compilerPath = changedLineEditsValues[i];
                 settings.setValue("MainWindow/compilerPath", compilerPath);
             break;
