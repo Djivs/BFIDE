@@ -12,13 +12,15 @@ SOURCES += \
     bfhighlighter.cpp \
     codeeditor.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    settingswidget.cpp
 
 HEADERS += \
     QConsole/qconsole.h \
     bfhighlighter.h \
     codeeditor.h \
-    mainwindow.h
+    mainwindow.h \
+    settingswidget.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

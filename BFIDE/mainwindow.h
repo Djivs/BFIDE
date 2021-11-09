@@ -16,9 +16,11 @@
 #include <QMessageBox>
 #include <QTabWidget>
 #include <QShortcut>
+#include <QSettings>
 
 #include "bfhighlighter.h"
 #include "codeeditor.h"
+#include "settingswidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +38,7 @@ private:
     QAction *runCodeAction;
     QAction *newFileAction;
     QAction *saveFileAction;
+    QAction *settingsAction;
 
     QShortcut *closeTabShortcut;
 
@@ -49,9 +52,13 @@ private:
 
     QVector <Editor> editors;
 
+    SettingsWidget *settingsWidget;
+
     QHBoxLayout *layout;
 
     QString compilerPath;
+
+    QSettings settings;
 
 
     void openFile();
@@ -60,7 +67,10 @@ private:
     void saveFile();
     int saveCodeToFile(QString fileName);
 
-    void loadComiplerPath();
+    void loadSettings();
+    void openSettings();
+    void processChanges();
+
     void addNewEditor(QFile &file);
 
     void runCode(QString fileName);

@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     runCodeAction = new QAction(tr("Run"));
     newFileAction = new QAction(tr("New File"));
     saveFileAction = new QAction(tr("Save File"));
+    settingsAction = new QAction(tr("Settings"));
 
     openFileAction->setShortcut(tr("Ctrl+O"));
     runCodeAction->setShortcut(tr("F5"));
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     menuBar = new QMenuBar;
     menuBar->addMenu(fileActionsMenu);
     menuBar->addAction(runCodeAction);
+    menuBar->addAction(settingsAction);
     this->setMenuBar(menuBar);
 
 
@@ -46,14 +48,19 @@ MainWindow::MainWindow(QWidget *parent)
             [this] {runCode(editors[editorsTabWidget->currentIndex()].fileName);});
     connect(openFileAction, &QAction::triggered, this, [this] {openFile();});
     connect(newFileAction, &QAction::triggered, this, [this] {newFile();});
-    connect(saveFileAction, &QAction::triggered, this, [this] \
-    {saveFile();});
+    connect(saveFileAction, &QAction::triggered, this, [this] {saveFile();});
+    connect(settingsAction, &QAction::triggered, this, [this] {openSettings();});
 
 
     closeTabShortcut = new QShortcut(QKeySequence(tr("Ctrl+W")), this, \
                                      [this] {editorsTabWidget->removeTab(editorsTabWidget->currentIndex());});
 
-    loadComiplerPath();
+    loadSettings();
+
+    settingsWidget = new SettingsWidget;
+    settingsWidget->setWindowFlag(Qt::WindowStaysOnTopHint);
+    connect (settingsWidget, &SettingsWidget::lineEditsSettingFailed, this, [this] {error("Invalid parameters passed for QLineEdits values");});
+    connect(settingsWidget, &SettingsWidget::changesSaved, this, [this] {processChanges();});
 
     QWidget *w = new QWidget();
     w->setLayout(layout); setCentralWidget(w);
@@ -138,15 +145,29 @@ void MainWindow::saveFile() {
     }
 
 }
-void MainWindow::loadComiplerPath() {
-    QFile configFile("../BFIDE/.config");
-    if (openQFile(configFile, QFile::ReadOnly))
-        return;
-    QStringList configLines = QString(configFile.readAll()).split('\n');
-    for (auto &i : configLines) {
-        QStringList params = i.split('=');
-        if (params[0] == "compiler") {
-            compilerPath = params[1];
+
+void MainWindow::loadSettings() {
+    compilerPath = settings.value("MainWindow/compilerPath").toString();
+    if (compilerPath.isEmpty()) {
+        compilerPath = "/usr/bin/brainfuck";
+        settings.setValue("MainWindow/compilerPath", compilerPath);
+    }
+}
+
+void MainWindow::openSettings() {
+    settingsWidget->setLineEditsValues({compilerPath});
+    settingsWidget->show();
+}
+
+void MainWindow::processChanges() {
+    QStringList changedLineEditsValues = settingsWidget->getChangedEditsValues();
+    QVector <int> changedIndexes = settingsWidget->getChangedEditsIndexes();
+    for (auto &i : changedIndexes) {
+        switch (i) {
+            case 0:
+                compilerPath = changedLineEditsValues[i];
+                settings.setValue("MainWindow/compilerPath", compilerPath);
+            break;
         }
     }
 }
