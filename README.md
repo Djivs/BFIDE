@@ -4,9 +4,6 @@ Simple Linux IDE for editing and running BrainFuck code
 - git
 - terminator
 - Any brainfuck compiler (for example, https://github.com/fabianishere/brainfuck)
-## BrainFuck compiler setup:
-- Rename compiler binary file to 'brainfuck'
-- Move it to /usr/bin/ folder
 ## Instalation:
 1. Go to releases page
 2. Pick latest release
@@ -25,6 +22,9 @@ unsolved Qt dependencies. So, quick fix is to install these packages:
 (Names can be different for different distributions)  
 Or, if it didn't helped, you need to check out this [article](https://wiki.qt.io/Building_Qt_5_from_Git)  
 But anyway, if you face with some troubles, you can always open a new issue on issues tab.  
+## Setting up BFIDE  
+After installation, you have specify path to brainfuck compiler.
+By default, compiler path is set to '/usr/bin/brainfuck', but you can change it in settings.  
 ## Credits:  
 - [CQtDeployer](https://github.com/QuasarApp/CQtDeployer)
 - [Code Editor Class](https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/widgets/codeeditor?h=5.15)
