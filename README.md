@@ -1,7 +1,6 @@
 # BFIDE
 Simple Linux IDE for editing and running BrainFuck code
 ## Dependencies:
-- git
 - terminator
 - Any brainfuck compiler (for example, https://github.com/fabianishere/brainfuck)
 ## Instalation:
