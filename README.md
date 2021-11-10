@@ -1,7 +1,7 @@
 # BFIDE
 Simple Linux IDE for editing and running BrainFuck code
 ## Requirements:
-- [Terminator](https://github.com/gnome-terminator/terminator)
+- Any terminal emulator (for example, xterm, terminator, konsole, ...)
 - Any brainfuck compiler (for example, https://github.com/fabianishere/brainfuck)
 ## Instalation:
 1. Go to releases page
@@ -20,10 +20,12 @@ unsolved Qt dependencies. So, quick fix is to install these packages:
 
 (Names can be different for different distributions)  
 Or, if it didn't helped, you need to check out this [article](https://wiki.qt.io/Building_Qt_5_from_Git)  
-But anyway, if you face with some troubles, you can always open a new issue on issues tab.  
+If that didn't helped, open a new [issue](https://github.com/Djivs/BFIDE/issues)
 ## Setting up BFIDE  
-After installation, you have specify path to brainfuck compiler.
-By default, compiler path is set to '/usr/bin/brainfuck', but you can change it in settings.  
+After installation, go to settings and set up these parameters:
+1. BrainFuck compiler path  
+2. Terminal path  
+3. [Optional] Shell command, which will be used to run code
 ## Credits:  
 - [CQtDeployer](https://github.com/QuasarApp/CQtDeployer)
 - [Code Editor Class](https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/widgets/codeeditor?h=5.15)
