@@ -17,6 +17,7 @@
 #include <QTabWidget>
 #include <QShortcut>
 #include <QSettings>
+#include <QProcess>
 
 #include "bfhighlighter.h"
 #include "codeeditor.h"
@@ -56,7 +57,8 @@ private:
 
     QHBoxLayout *layout;
 
-    QString compilerPath;
+    QString compilerPath, terminalPath, execCommand;
+    QStringList execArguments;
 
     QSettings settings;
 
@@ -72,8 +74,10 @@ private:
     void processChanges();
 
     void addNewEditor(QFile &file);
+    void removeTab(int index);
 
     void runCode(QString fileName);
+    void fillExecArguments();
 
     void error(QString errorString);
 };

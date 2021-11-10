@@ -2,6 +2,7 @@
 
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
 {
+    setMinimumWidth(400);
     layout = new QGridLayout();
     layout->setAlignment(Qt::AlignCenter);
     for (int i = 0; i < LINEEDITSOPTIONSSIZE; ++i) {
@@ -18,8 +19,11 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
 
     layout->addWidget(saveButton, LINEEDITSOPTIONSSIZE, 0, 1, 2);
 
-
     setLayout(layout);
+
+    for (int i = 0; i < LINEEDITSOPTIONSSIZE; ++i) {
+        isLineEditsChanged[i] = false;
+    }
 }
 
 void SettingsWidget::saveChanges() {

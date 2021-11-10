@@ -6,8 +6,9 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
+#include <QComboBox>
 
-enum {COMPILERPATH, LINEEDITSOPTIONSSIZE};
+enum {COMPILERPATH, TERMINALPATH, EXECCOMAND, LINEEDITSOPTIONSSIZE};
 
 class SettingsWidget : public QWidget
 {
@@ -20,7 +21,7 @@ public:
     QStringList getChangedEditsValues() {return changedEditsValues;}
     QVector <int> getChangedEditsIndexes() {return changedEditsIndexes;}
 private:
-    QString lineEditsTitles[LINEEDITSOPTIONSSIZE] = {"Compiler path"};
+    QString lineEditsTitles[LINEEDITSOPTIONSSIZE] = {"Compiler path", "Terminal path", "Running command"};
     QLineEdit *lineEdits[LINEEDITSOPTIONSSIZE];
     QPushButton *saveButton;
 
@@ -30,7 +31,7 @@ private:
 
     QGridLayout *layout;
 
-    bool isLineEditsChanged[LINEEDITSOPTIONSSIZE] = {};
+    bool isLineEditsChanged[LINEEDITSOPTIONSSIZE];
 
     void saveChanges();
 signals:

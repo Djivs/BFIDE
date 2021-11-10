@@ -35,7 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     editorsTabWidget = new QTabWidget();
     editorsTabWidget->setTabsClosable(true);
     editorsTabWidget->addTab(textEdit, "Begin");
-
+    //connect(editorsTabWidget->tabBar(), &QTabBar::tabCloseRequested, editorsTabWidget->tabBar(), &QTabBar::removeTab);
+    connect(editorsTabWidget->tabBar(), &QTabBar::tabCloseRequested, this, &MainWindow::removeTab);
 
     BFHighlighter *highlighter = new BFHighlighter(textEdit->document());
 
@@ -75,21 +76,16 @@ void MainWindow::runCode(QString fileName) {
         saveFile();
         fileName = editors[editorsTabWidget->currentIndex()].fileName;
     }
-    if(saveCodeToFile(fileName))
+    if(saveCodeToFile(fileName)) {
         return;
+    }
 
-    pid_t pid = fork();
-    if (pid == -1) {
-        error("Can't clone process for terminal opening");
-        return;
-    }
-    if (!pid) {
-        QString command = compilerPath + ' ' + fileName + ";read  -n 1 -p";
-        if(execlp("terminator", "terminator", "-e",  command.toStdString().c_str(), NULL) == -1) {
-            error("Can't run code via terminal");
-            return;
-        }
-    }
+    QString command = compilerPath + ' ' + fileName + ";read  -n 1 -p";
+    QStringList arguments = execArguments;
+    arguments.append(command);
+
+    QProcess *process = new QProcess;
+    process->start(terminalPath, arguments);
 }
 
 void MainWindow::openFile() {
@@ -152,42 +148,108 @@ void MainWindow::loadSettings() {
         compilerPath = "/usr/bin/brainfuck";
         settings.setValue("MainWindow/compilerPath", compilerPath);
     }
+
+    terminalPath = settings.value("MainWindow/terminalPath").toString();
+    if (terminalPath.isEmpty()) {
+        terminalPath = "/usr/bin/xterm";
+        settings.setValue("MainWindow/terminalPath", terminalPath);
+    }
+
+    execCommand = settings.value("MainWindow/execCommand").toString();
+    if (execCommand.isEmpty()) {
+        execCommand = "{terminal} -e {command}";
+        settings.setValue("MainWindow/execCommand", execCommand);
+    }
+    fillExecArguments();
 }
 
 void MainWindow::openSettings() {
-    settingsWidget->setLineEditsValues({compilerPath});
+    settingsWidget->setLineEditsValues({compilerPath, terminalPath, execCommand});
     settingsWidget->show();
 }
 
 void MainWindow::processChanges() {
     QStringList changedLineEditsValues = settingsWidget->getChangedEditsValues();
     QVector <int> changedIndexes = settingsWidget->getChangedEditsIndexes();
-    for (auto &i : changedIndexes) {
-        switch (i) {
+    QFile file;
+    for (int i = 0; i < changedIndexes.length(); ++i) {
+        switch (changedIndexes[i]) {
             case 0:
-                QFile file(changedLineEditsValues[i]);
+                file.setFileName(changedLineEditsValues[i]);
                 if (!file.open(QFile::ReadOnly) || QFileInfo(file).completeSuffix() != "") {
                     error("Указанный путь для компилятора не существует\nили указанный файл не является исполняемым");
-                    break;
+                    return;
                 }
                 compilerPath = changedLineEditsValues[i];
                 settings.setValue("MainWindow/compilerPath", compilerPath);
+            break;
+            case 1:
+            file.setFileName(changedLineEditsValues[i]);
+            if (!file.open(QFile::ReadOnly) || QFileInfo(file).completeSuffix() != "") {
+                error("Указанный путь для терминала не существует\nили указанный файл не является исполняемым");
+                return;
+            }
+            terminalPath = changedLineEditsValues[i];
+            settings.setValue("MainWindow/terminalPath", terminalPath);
+            break;
+        case 2:
+            QString command = changedLineEditsValues[i];
+            int bracketsCount = 0;
+            for (int ii = 0; ii < command.length(); ++ii) {
+                if (command[ii] == '{') {
+                    ++bracketsCount;
+                    int j = ii+ 1;
+                     for (;j < command.length() && command[j] != '}'; ++j) {}
+                    if (j == command.length()) {
+                        error("Задана некорректная команда для запуска кода в терминале");
+                        return;
+                    }
+                }
+            }
+            if (bracketsCount != 2) {
+                error("Invalid command to run code");
+                return;
+            }
+            execCommand = command;
+            settings.setValue("MainWindow/execCommand", execCommand);
+
+            fillExecArguments();
+
+
             break;
         }
     }
 }
 
+void MainWindow::fillExecArguments() {
+    execArguments.clear();
+    int left = execCommand.indexOf('}'), right = execCommand.lastIndexOf('{');
+    execArguments = execCommand.mid(left + 1, right - left - 1).split(' ');
+    execArguments.removeAll("");
+}
+
 void MainWindow::addNewEditor(QFile &file) {
     QString fileName = file.fileName();
-    if (editors[editorsTabWidget->currentIndex()].fileName!= fileName) {
-        CodeEditor *text = new CodeEditor;
-        text->setPlainText(file.readAll());
-        BFHighlighter *highlighter = new BFHighlighter(text->document());
-        editors.append({text, highlighter, fileName});
-        editorsTabWidget->addTab(text, QFileInfo(fileName).baseName());
-        editorsTabWidget->setCurrentIndex(editors.size()-1);
-    }
+    CodeEditor *text = new CodeEditor;
+    text->setPlainText(file.readAll());
+    BFHighlighter *highlighter = new BFHighlighter(text->document());
+    editors.append({text, highlighter, fileName});
+    editorsTabWidget->addTab(text, QFileInfo(fileName).baseName());
+    editorsTabWidget->setCurrentIndex(editors.size() - 1);
     file.close();
+}
+
+void MainWindow::removeTab(int index) {
+    int startingIndex = editorsTabWidget->currentIndex();
+    if (editorsTabWidget->count() < 2)
+        return;
+    editors.remove(index);
+    editorsTabWidget->clear();
+    for (auto &i: editors) {
+        editorsTabWidget->addTab(i.edit, QFileInfo(i.fileName).baseName());
+    }
+    if (startingIndex == editors.length()) --startingIndex;
+    editorsTabWidget->setCurrentIndex(startingIndex);
 }
 
 
