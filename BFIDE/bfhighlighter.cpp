@@ -2,27 +2,28 @@
 
 BFHighlighter::BFHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
-   HighlightingRule rule;
+    setUpColorScheme(Qt::black, QColor(255, 51, 51), Qt::blue, Qt::darkGreen);
+    HighlightingRule rule;
 
-   bracketsFormat.setForeground(Qt::black);
-   rule.pattern = QRegularExpression(QStringLiteral("[\\[\\]]"));
-   rule.format = bracketsFormat;
-   highlightingRules.append(rule);
+    bracketsFormat.setForeground(*bracketsColor);
+    rule.pattern = QRegularExpression(QStringLiteral("[\\[\\]]"));
+    rule.format = bracketsFormat;
+    highlightingRules.append(rule);
 
-   movesFormat.setForeground(QColor(255, 51, 51));
-   rule.pattern = QRegularExpression(QStringLiteral("[<>]"));
-   rule.format = movesFormat;
-   highlightingRules.append(rule);
+    movesFormat.setForeground(*movesColor);
+    rule.pattern = QRegularExpression(QStringLiteral("[<>]"));
+    rule.format = movesFormat;
+    highlightingRules.append(rule);
 
-   mathFormat.setForeground(Qt::blue);
-   rule.pattern = QRegularExpression(QStringLiteral("[+-]"));
-   rule.format = mathFormat;
-   highlightingRules.append(rule);
+    mathFormat.setForeground(*mathColor);
+    rule.pattern = QRegularExpression(QStringLiteral("[+-]"));
+    rule.format = mathFormat;
+    highlightingRules.append(rule);
 
-   consoleFormat.setForeground(Qt::darkGreen);
-   rule.pattern = QRegularExpression(QStringLiteral("[.,]"));
-   rule.format = consoleFormat;
-   highlightingRules.append(rule);
+    consoleFormat.setForeground(*consoleColor);
+    rule.pattern = QRegularExpression(QStringLiteral("[.,]"));
+    rule.format = consoleFormat;
+    highlightingRules.append(rule);
 }
 
 void BFHighlighter::highlightBlock(const QString &text) {
@@ -33,4 +34,11 @@ void BFHighlighter::highlightBlock(const QString &text) {
                 setFormat(match.capturedStart(), match.capturedLength(), rule.format);
             }
     }
+}
+
+void BFHighlighter::setUpColorScheme(QColor brackets, QColor moves, QColor math, QColor console) {
+    bracketsColor = new QColor(brackets);
+    movesColor = new QColor(moves);
+    mathColor = new QColor(math);
+    consoleColor = new QColor(console);
 }

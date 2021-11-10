@@ -20,10 +20,14 @@ private:
     };
     QVector<HighlightingRule> highlightingRules;
 
+    QColor *bracketsColor, *movesColor, *mathColor, *consoleColor;
+
     QTextCharFormat bracketsFormat;
     QTextCharFormat movesFormat;
     QTextCharFormat mathFormat;
     QTextCharFormat consoleFormat;
+
+    void setUpColorScheme(QColor brackets, QColor moves, QColor math, QColor console);
 };
 
 #endif // BFHIGHLIGHTER_H
