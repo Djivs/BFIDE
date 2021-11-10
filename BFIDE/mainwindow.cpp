@@ -35,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
     editorsTabWidget = new QTabWidget();
     editorsTabWidget->setTabsClosable(true);
     editorsTabWidget->addTab(textEdit, "Begin");
-    //connect(editorsTabWidget->tabBar(), &QTabBar::tabCloseRequested, editorsTabWidget->tabBar(), &QTabBar::removeTab);
     connect(editorsTabWidget->tabBar(), &QTabBar::tabCloseRequested, this, &MainWindow::removeTab);
 
     BFHighlighter *highlighter = new BFHighlighter(textEdit->document());
@@ -47,10 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(runCodeAction, &QAction::triggered, this, \
             [this] {runCode(editors[editorsTabWidget->currentIndex()].fileName);});
-    connect(openFileAction, &QAction::triggered, this, [this] {openFile();});
-    connect(newFileAction, &QAction::triggered, this, [this] {newFile();});
-    connect(saveFileAction, &QAction::triggered, this, [this] {saveFile();});
-    connect(settingsAction, &QAction::triggered, this, [this] {openSettings();});
+    connect(openFileAction, &QAction::triggered, this, &MainWindow::openFile);
+    connect(newFileAction, &QAction::triggered, this, &MainWindow::newFile);
+    connect(saveFileAction, &QAction::triggered, this, &MainWindow::saveFile);
+    connect(settingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
 
     closeTabShortcut = new QShortcut(QKeySequence(tr("Ctrl+W")), this, \
@@ -61,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     settingsWidget = new SettingsWidget;
     settingsWidget->setWindowFlag(Qt::WindowStaysOnTopHint);
     connect (settingsWidget, &SettingsWidget::lineEditsSettingFailed, this, [this] {error("Invalid parameters passed for QLineEdits values");});
-    connect(settingsWidget, &SettingsWidget::changesSaved, this, [this] {processChanges();});
+    connect(settingsWidget, &SettingsWidget::changesSaved, this, &MainWindow::processChanges);
 
     QWidget *w = new QWidget();
     w->setLayout(layout); setCentralWidget(w);

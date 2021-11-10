@@ -14,7 +14,7 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     }
 
     saveButton = new QPushButton("Save");
-    connect(saveButton, &QPushButton::clicked, this, [this] {saveChanges();});
+    connect(saveButton, &QPushButton::clicked, this, &SettingsWidget::saveChanges);
     saveButton->setEnabled(false);
 
     layout->addWidget(saveButton, LINEEDITSOPTIONSSIZE, 0, 1, 2);
