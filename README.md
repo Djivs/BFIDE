@@ -1,5 +1,5 @@
 # BFIDE
-Simple Linux IDE for editing and running BrainFuck code
+Simple Linux IDE for editing and running BrainFuck code 
 ## Requirements:
 - Any terminal emulator (for example, xterm, terminator, konsole, ...)
 - Any brainfuck compiler (for example, https://github.com/fabianishere/brainfuck)
